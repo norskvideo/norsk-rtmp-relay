@@ -14,10 +14,16 @@ type Server = {
 
 
 export type RelayStream = {
-  app: string,
-  stream: string,
-  host: string,
-  port: number
+  from: {
+    app: string,
+    stream: string
+  }
+  to: {
+    app: string,
+    stream: string,
+    host: string,
+    port: number
+  }
 }
 
 type Norsk = {

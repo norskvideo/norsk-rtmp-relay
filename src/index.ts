@@ -24,7 +24,7 @@ async function main() {
     port: Config.server.rtmp_port(),
     onConnection: (_connectionId, app, _url) => {
       const exists = !!streams.find((s) => {
-        return s.app == app
+        return s.from.app == app
       });
       if (exists) {
         infolog("Accepting connection for app", { app })
@@ -35,10 +35,10 @@ async function main() {
       }
     },
     onStream: (_connectionId, app, _url, streamId, publishName): OnStreamResult => {
-      const exists = !!streams.find((s) => {
-        return s.app == app && s.stream == publishName
+      const matching = streams.filter((s) => {
+        return s.from.app == app && s.from.stream == publishName
       });
-      if (exists) {
+      if (matching.length > 0) {
         infolog("Accepting stream for app", { app, streamId, publishName })
         return {
           accept: true,
@@ -63,27 +63,28 @@ async function main() {
     }
   })
 
-  for (const stream of streams) {
-    infolog("Setting up stream egest", { app: stream.app, stream: stream.stream })
-
+  streams.map(async (stream, i) => {
+    infolog("Setting up stream egest", { from: stream.from, to: stream.to })
     const relay = await norsk.output.rtmp({
-      id: `egest-${stream.app}-${stream.stream}`,
-      url: `rtmp://${stream.host}:${stream.port}/${stream.app}/${stream.stream}`,
+      id: `egest-${stream.from}-${stream.to}-${i}`,
+      url: `rtmp://${stream.to.host}:${stream.to.port}/${stream.to.app}/${stream.to.stream}`,
     })
     relay.subscribe([
       {
         source: ingest,
         sourceSelector: (streams) => {
-          return streams.filter((s) => s.streamKey.sourceName == `${stream.app}-${stream.stream}`).map((s => s.streamKey))
+          return streams
+            .filter((s) =>
+              s.streamKey.sourceName == `${stream.from.app}-${stream.from.stream}`)
+            .map((s => s.streamKey))
+
         }
       }
     ])
-
-  }
+  })
 }
 
 
 void main();
-
 
 
