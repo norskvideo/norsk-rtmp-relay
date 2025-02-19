@@ -1,10 +1,13 @@
 {
-  "name": "norsk-rtmp-relay",
+  "name": "@norskvideo/norsk-rtmp-relay",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "norsk-rtmp-relay": "bin/run.sh"
   },
   "author": "",
   "license": "MIT",

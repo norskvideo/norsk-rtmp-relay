@@ -1,0 +1,121 @@
+name: Publish
+
+on:
+  workflow_dispatch:
+    inputs:
+      update-deps:
+        description: 'Update Norsk SDK'
+        required: true
+        default: true
+        type: boolean
+      new-version:
+        description: 'New Version'
+        required: true
+        default: 'minor'
+        type: choice
+        options:
+          - major
+          - minor
+          - patch
+          - nightly
+  workflow_call:
+    inputs:
+      update-deps:
+        description: 'Update Norsk SDK'
+        required: true
+        default: true
+        type: boolean
+      new-version:
+        description: 'New Version'
+        required: true
+        default: 'minor'
+        type: string
+        # options:
+        #   - major
+        #   - minor
+        #   - patch
+        #   - nightly
+
+jobs:
+  publish:
+    runs-on: self-hosted
+    steps:
+    - name: Checkout the head commit of the branch
+      uses: actions/checkout@v4
+
+    - name: Install Nix
+      if: ${{ runner.environment == 'github-hosted' }}
+      uses: DeterminateSystems/nix-installer-action@v4
+
+    - name: Run the Magic Nix Cache
+      if: ${{ runner.environment == 'github-hosted' }}
+      uses: DeterminateSystems/magic-nix-cache-action@v2
+
+    - name: Nix env
+      uses: rrbutani/use-nix-shell-action@v1
+      with:
+        file: shell.nix
+
+    - name: Update Deps (Latest)
+      if: ${{ inputs.update-deps && inputs.new-version != 'nightly' }}
+      run: "npm install @norskvideo/norsk-sdk@latest --save"
+
+    - name: Update Deps (Nightly)
+      if: ${{ inputs.update-deps && inputs.new-version == 'nightly' }}
+      run: "npm install @norskvideo/norsk-sdk@nightly --save"
+
+    - name: Check for changes
+      id: changes
+      run: |
+        git config --global user.email "jankings@id3as.co.uk"
+        git config --global user.name "Jankings"
+        if git diff --exit-code package-lock.json; then
+          echo "changes_exist=false" >> $GITHUB_OUTPUT
+        else
+          echo "changes_exist=true" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Commit latest
+      if: ${{ steps.changes.outputs.changes_exist && inputs.new-version == 'nightly' }}
+      continue-on-error: true
+      run: |
+        git add package.json
+        git add package-lock.json
+        git commit -m "Automated dependency update" 
+
+    - name: Tag Nightly
+      if: ${{ inputs.new-version == 'nightly' }}
+      run: |
+        commit="$(git rev-parse --short=8 HEAD)"
+        label="$(cat package.json | jq -r .version)-$(date --iso-8601)-$commit"
+        npm version --no-git-tag-version "$label+nightly"
+
+    - name: Run Build 
+      run: |
+        npm install
+        npm run build
+
+    - name: "Publish"
+      id: "publish"
+      uses: JS-DevTools/npm-publish@v3
+      with:
+        access: public
+        tag: ${{ inputs.new-version == 'nightly' && 'nightly' || 'latest' }}
+        token: ${{ secrets.NPM_TOKEN }}
+
+    # Then this is the next version
+    # if we're not just doing a nightly (which we discard)
+    - name: Version Bump
+      if: ${{ inputs.new-version != 'nightly' }}
+      run: | 
+        npm version ${{ inputs.new-version }} --no-git-tag-version
+        git add package.json
+        git add package-lock.json
+        git commit -m "version bump to $(cat package.json | jq -r .version)"
+        git push 
+
+    # We still push in the latest deps
+    - name: Version Bump
+      if: ${{ inputs.new-version == 'nightly' }}
+      run: | 
+        git push 

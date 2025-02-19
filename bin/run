@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+ROOT=$(realpath ${0%/*}/../@norskvideo/norsk-rtmp-relay)
+node "$ROOT/lib/index.js" $@
