@@ -4,11 +4,16 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "prepare": "npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": {
-    "norsk-rtmp-relay": "bin/run.sh"
+    "norsk-rtmp-relay": "bin"
   },
+  "files": [
+    "lib/**",
+    "bin/**"
+  ],
   "author": "",
   "license": "MIT",
   "dependencies": {
