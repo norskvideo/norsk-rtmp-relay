@@ -1,0 +1,20 @@
+{
+  "name": "norsk-rtmp-relay",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@norskvideo/norsk-sdk": "^1.0.400",
+    "config": "^3.3.12",
+    "winston": "^3.17.0"
+  },
+  "devDependencies": {
+    "@types/config": "^3.3.5",
+    "typescript": "^5.7.3"
+  }
+}

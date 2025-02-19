@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "lib": [
+      "es2020",
+      "DOM"
+    ],
+    "typeRoots": [
+      "src/@types",
+      "node_modules/@types",
+      "../../node_modules/@types"
+    ],
+    "strict": true,
+    "removeComments": true,
+    "esModuleInterop": true,
+    "sourceMap": true,
+    "rootDir": "./src",
+    "skipLibCheck": true,
+    "jsx": "react-jsx",
+    "declaration": true,
+    "outDir": "./lib"
+  },
+  "include": [
+    "src"
+  ]
+}
