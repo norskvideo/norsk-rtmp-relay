@@ -7,6 +7,17 @@ type Config = {
 
 type Server = {
   logs: () => string,
+  rtmp_port: () => number,
+  rtmp_host: () => string,
+  streams: () => RelayStream[]
+}
+
+
+export type RelayStream = {
+  app: string,
+  stream: string,
+  host: string,
+  port: number
 }
 
 type Norsk = {
@@ -20,7 +31,10 @@ function read<T>(key: string, def: T) {
 
 const Config: Config = {
   server: {
-    logs: () => read('server.logs', 'logs')
+    logs: () => read('server.logs', 'logs'),
+    rtmp_port: () => read('rtmp.port', 1935),
+    rtmp_host: () => read('rtmp.host', '0.0.0.0'),
+    streams: () => read('streams', [])
   },
   norsk: {
     host: () => read('norsk.host', '127.0.0.1'),

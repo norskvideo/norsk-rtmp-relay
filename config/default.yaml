@@ -1,17 +1,17 @@
-listen:
+rtmp:
   port: 1935
   host: 0.0.0.0
 
 streams:
   - app: norsk
     stream: ch01
-    host: 127.0.0.1
+    host: ashton-nuc
     port: 11931
   - app: norsk
     stream: ch02
-    host: 127.0.0.1
+    host: ashton-nuc
     port: 11932
   - app: norsk
     stream: ch03
-    host: 127.0.0.1
+    host: ashton-nuc
     port: 11933
