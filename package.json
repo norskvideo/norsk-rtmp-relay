@@ -9,7 +9,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": {
-    "norsk-rtmp-relay": "bin"
+    "norsk-rtmp-relay": "./bin/run"
   },
   "files": [
     "lib/**",
