@@ -9,6 +9,8 @@ async function main() {
 
   const norsk = await Norsk.connect({
     url: `${Config.norsk.host()}:${Config.norsk.api_port()}`,
+    onLicenseEvent: (message, running) => {
+    },
     onFailedToConnect: () => {
       errorlog("Failed to connect to norsk host")
     }
