@@ -66,7 +66,7 @@ async function main() {
   streams.map(async (stream, i) => {
     infolog("Setting up stream egest", { from: stream.from, to: stream.to })
     const relay = await norsk.output.rtmp({
-      id: `egest-${stream.from}-${stream.to}-${i}`,
+      id: `egest-${stream.from.stream}-${stream.to.stream}-${i}`,
       url: `rtmp://${stream.to.host}:${stream.to.port}/${stream.to.app}/${stream.to.stream}`,
     })
     relay.subscribe([
