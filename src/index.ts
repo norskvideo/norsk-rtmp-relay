@@ -2,23 +2,22 @@ import { Norsk, OnStreamResult } from '@norskvideo/norsk-sdk';
 import Config from './config';
 import { debuglog, errorlog, infolog } from './logging';
 
-
+// work around our 'void main'
+const stayAlive = setTimeout(() => { }, 60000);
 
 async function main() {
   debuglog("Connecting to Norsk");
 
   const norsk = await Norsk.connect({
     url: `${Config.norsk.host()}:${Config.norsk.api_port()}`,
-    onLicenseEvent: (message, running) => {
-    },
     onFailedToConnect: () => {
       errorlog("Failed to connect to norsk host")
     }
   });
+  clearTimeout(stayAlive);
 
   const streams = Config.server.streams();
   debuglog("Reading streams", { streams });
-
 
   debuglog("Setting up ingest", { host: Config.server.rtmp_host(), port: Config.server.rtmp_port() });
   const ingest = await norsk.input.rtmpServer({
@@ -86,7 +85,4 @@ async function main() {
   })
 }
 
-
 void main();
-
-
