@@ -13,7 +13,7 @@ streams:
       port: 11931
   - from:
       app: norsk
-      stream: ch02
+      stream: ch01
     to:
       app: norsk
       stream: stream
