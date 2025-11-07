@@ -21,6 +21,7 @@ async function main() {
   debuglog("Reading streams", { streams });
 
   debuglog("Setting up ingest", { host: Config.server.rtmp_host(), port: Config.server.rtmp_port() });
+  let ingestIndex = 0;
   const ingest = await norsk.input.rtmpServer({
     // host: Config.server.rtmp_host(),
     port: Config.server.rtmp_port(),
@@ -51,13 +52,13 @@ async function main() {
           accept: true,
           videoStreamKey: {
             programNumber: 1,
-            sourceName: `${app}-${publishName}`,
+            sourceName: `${app}-${publishName}-${ingestIndex}`,
             streamId: streamId,
             renditionName: 'default'
           },
           audioStreamKey: {
             programNumber: 1,
-            sourceName: `${app}-${publishName}`,
+            sourceName: `${app}-${publishName}-${ingestIndex++}`,
             streamId: streamId + 1,
             renditionName: 'default'
           },
@@ -108,8 +109,9 @@ async function main() {
       errorlog("Unrecognised stream disconnected");
       return;
     }
-    active.delete(connectionId);
-    Promise.all(v.relays.map(async (r) => r.close()));
+    Promise.all(v.relays.map(async (r) => r.close())).then(() => {
+          active.delete(connectionId);
+    });
   }
 }
 
