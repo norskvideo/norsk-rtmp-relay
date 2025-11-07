@@ -18,7 +18,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@norskvideo/norsk-sdk": "^1.0.401",
+    "@norskvideo/norsk-sdk": "^1.0.402-2025-11-07-f4307211",
     "config": "^3.3.12",
     "js-yaml": "^4.1.0",
     "winston": "^3.17.0"
