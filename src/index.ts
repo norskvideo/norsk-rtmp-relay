@@ -92,8 +92,7 @@ async function main() {
             source: ingest,
             sourceSelector: (streams) => {
               return streams
-                .filter((s) =>
-                  s.streamKey.sourceName == `${stream.from.app}-${stream.from.stream}`)
+                .filter((s) => s.streamKey.sourceName.startsWith(`${stream.from.app}-${stream.from.stream}`))
                 .map((s => s.streamKey))
 
             }
@@ -110,7 +109,7 @@ async function main() {
       return;
     }
     Promise.all(v.relays.map(async (r) => r.close())).then(() => {
-          active.delete(connectionId);
+      active.delete(connectionId);
     });
   }
 }
